@@ -36,8 +36,14 @@
     {
       devShells = forEachSupportedSystem ({ pkgs }: {
         default = pkgs.mkShell {
+          nativeBuildInputs = with pkgs; [
+            pkg-config
+          ];
           packages = with pkgs; [
             # rustToolchain
+            clang
+            # gdb
+            lld
             openssl
             pkg-config
             # cargo-deny
@@ -45,7 +51,28 @@
             # cargo-watch
             # rust-analyzer
             alsa-lib
+            udev
+            # libudev-zero
+            # libudev0-shim
+            vulkan-loader
+            xorg.libX11
+            # x11
+            xorg.libXrandr
+            xorg.libXcursor
+            xorg.libXi            
+            # dbus
+            libxkbcommon
+            ldtk
           ];
+          shellHook = ''
+            export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${pkgs.lib.makeLibraryPath [
+              pkgs.libxkbcommon
+              pkgs.udev
+              pkgs.alsa-lib
+              pkgs.vulkan-loader
+            ]}"
+            export LIBCLANG_PATH="${pkgs.libclang.lib}/lib";
+          '';
         };
       });
     };

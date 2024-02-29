@@ -5,7 +5,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = { version = "0.13.0", features = ["bevy_sprite"] }
+bevy = { version = "0.13.0", features = [ "bevy_sprite", "dynamic_linking" ] }
+# bevy_tile_map for tile map based 2d games.
 
-[profile.dev.packages."*"]
-opt-level = 3
+# [profile.dev.packages."*"]
+# opt-level = 3
