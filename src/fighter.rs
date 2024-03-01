@@ -17,10 +17,6 @@ pub struct Fighter {
     pub player: Player,
     /// who/what controls this figter.
     pub contoller: Controller,
-    /// how many touches this fighter has scored.
-    pub touches: u8,
-    /// how many matches this player has won.
-    pub matches: u16,
     /// is this fighter mounting a parry.
     pub parrying: bool,
     //     /// does this fighter have the right of way.
@@ -33,7 +29,7 @@ pub struct Fighter {
 
 impl Fighter {
     /// takes the time struct from the game, returns an amount to move the players sprite.
-    pub fn update_movement(&mut self, time: Res<Time>) -> Vec3 {
+    pub fn update_movement(&mut self, time: Time) -> (Vec3, f32) {
         let b1 = self.action.blocked();
         let res = self.action.step(time.delta_seconds());
         let b2 = self.action.blocked();
@@ -50,6 +46,10 @@ impl Fighter {
             // info!("setting action -> {:?}", act);
             self.action = Action::from(act);
         }
+    }
+
+    pub fn lunged(&self) -> bool {
+        self.action.act == Move::Lunge
     }
 }
 
@@ -85,7 +85,7 @@ pub enum Handed {
     Left,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Player {
     /// player one.
     One,
@@ -108,7 +108,7 @@ impl Into<((f32, f32), Vec3)> for Move {
             Self::Advance => ((0.5, 0.35), Vec3::new(0.75, 0.0, 0.0)),
             Self::Retreat => ((0.5, 0.35), Vec3::new(-0.75, 0.0, 0.0)),
             Self::Jump => ((0.75, 0.5), Vec3::new(0.0, 1.25, 0.0)),
-            Self::Lunge => ((1.0, 0.5), Vec3::new(0.75, 0.0, 0.0)),
+            Self::Lunge => ((1.0, 0.8), Vec3::new(0.75, 0.0, 0.0)),
             // f32::NEG_INFINITY makes this non-blocking
             Self::EnGarde => ((f32::NEG_INFINITY, 0.0), Vec3::ZERO),
         }
@@ -143,12 +143,15 @@ impl Action {
         self.block_for >= 0.0
     }
 
-    fn step(&mut self, time_d: f32) -> Vec3 {
+    fn step(&mut self, time_d: f32) -> (Vec3, f32) {
         self.block_for -= time_d;
         let res = if self.moved >= 0.0 {
-            self.dir_vec * PLAYER_SPEED * time_d
+            (
+                self.dir_vec * PLAYER_SPEED * 32.0 * time_d,
+                (self.dir_vec * PLAYER_SPEED * time_d)[0],
+            )
         } else {
-            Vec3::ZERO
+            (Vec3::ZERO, 0.0)
         };
 
         self.moved -= time_d;
