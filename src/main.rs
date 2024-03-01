@@ -74,6 +74,7 @@ fn make_visible(
     // The delay may be different for your app or system.
     if frames.0 == 5 {
         window.single_mut().visible = true;
+        // TODO: change this once welcome and game mode selection screens get written.
         next_state.set(Screen::Game)
     }
 }
