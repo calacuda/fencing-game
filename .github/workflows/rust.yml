@@ -16,10 +16,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install Deps
+    - name: Install APT Deps
       run: sudo apt -y install libudev-dev libasound2-dev
     - name: Check
       run: cargo check
+    - name: Install Clippy
+      run: rustup component add clippy
     - name: Clippy
       run: cargo clippy --no-deps
     # - name: Build
