@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install Deps
-      run: apt install libudev alsa
+      run: sudo apt install libudev alsa
     - name: Check
       run: cargo check
     - name: Clippy
