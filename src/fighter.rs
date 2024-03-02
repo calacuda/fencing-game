@@ -15,8 +15,8 @@ pub struct Fighter {
     pub handed: Handed,
     /// is this player 1, 2.
     pub player: Player,
-    /// who/what controls this figter.
-    pub contoller: Controller,
+    // /// who/what controls this figter.
+    // pub contoller: Controller,
     /// is this fighter mounting a parry.
     pub parrying: bool,
     //     /// does this fighter have the right of way.
@@ -59,12 +59,20 @@ pub enum Controller {
     Computer,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Gaurd {
     Right,
     Down,
     Left,
     Up,
+}
+
+impl Gaurd {
+    // pub fn parries(&self, other: Self) -> bool {
+    //     match self {
+    //         Self::Up && if other == Self::
+    //     }
+    // }
 }
 
 #[derive(Debug)]

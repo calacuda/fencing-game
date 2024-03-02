@@ -9,6 +9,9 @@ pub enum Screen {
     ModeSelect,
     Game,
     PauseMenu,
+    NewBout,
+    /// used to announce that a player scored the touch
+    ScoreBoard,
 }
 
 #[derive(Resource, Debug)]
@@ -18,7 +21,7 @@ pub struct GameState {
     pub p1_score: Score,
     pub p2_score: Score,
     pub lunger: Option<Player>,
-    pub lunge_time: Option<Time>,
+    // pub lunge_time: Option<Time>,
 }
 
 impl GameState {
@@ -29,14 +32,20 @@ impl GameState {
             p1_score: Score::default(),
             p2_score: Score::default(),
             lunger: None,
-            lunge_time: None,
+            // lunge_time: None,
         }
     }
 
     pub fn reset(&mut self) {
         self.row = None;
         self.lunger = None;
-        self.lunge_time = None;
+        // self.lunge_time = None;
+    }
+
+    pub fn lunge(&mut self, player: Player) {
+        if self.lunger.is_none() {
+            self.lunger = Some(player);
+        }
     }
 }
 
