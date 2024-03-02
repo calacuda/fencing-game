@@ -112,6 +112,7 @@ pub fn fighter_2_movement(
                 fighter.set_action(Move::Lunge);
                 // world_state.row = None;
                 atlas.index += 1;
+                world_state.lunger = Some(Player::Two);
             } else if player1.lunged() && world_state.row == Some(Player::One) && distance >= 1.5 {
                 // parry if enemy lunges and has right of way
                 fighter.gaurd = match fighter.gaurd {
@@ -122,7 +123,10 @@ pub fn fighter_2_movement(
                 };
 
                 world_state.row = Some(Player::Two);
-            } else if world_state.row == Some(Player::Two) {
+            } else if world_state.row == Some(Player::Two)
+                || world_state.row.is_none()
+                || player1.action.act == Move::EnGarde
+            {
                 fighter.set_action(Move::Advance);
             }
             // else {

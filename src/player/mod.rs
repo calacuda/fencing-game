@@ -130,28 +130,30 @@ pub fn player_blade_play(
     if let (Ok(mut player), Ok(_player2)) =
         (player_query.get_single_mut(), player2_query.get_single())
     {
-        if !player.action.blocked() {
-            let prev_gaurd = player.gaurd;
+        /* if !player.action.blocked() { */
+        let prev_gaurd = player.gaurd.clone();
 
-            if keyboard_input.pressed(KeyCode::ArrowLeft) {
-                player.gaurd = Gaurd::Left;
-            } else if keyboard_input.pressed(KeyCode::ArrowRight) {
-                player.gaurd = Gaurd::Right;
-            } else if keyboard_input.pressed(KeyCode::ArrowUp) {
-                player.gaurd = Gaurd::Up;
-            } else if keyboard_input.pressed(KeyCode::ArrowDown) {
-                player.gaurd = Gaurd::Down;
-            }
-
-            if prev_gaurd != player.gaurd {
-                info!("player 1 gaurd: {:?}", player.gaurd);
-            }
-
-            if Some(Player::Two) == world_state.lunger && prev_gaurd != player.gaurd
-            // && player.gaurd.parries(player2.gaurd)
-            {
-                world_state.row = Some(Player::One);
-            }
+        if keyboard_input.pressed(KeyCode::ArrowLeft) {
+            player.gaurd = Gaurd::Left;
+        } else if keyboard_input.pressed(KeyCode::ArrowRight) {
+            player.gaurd = Gaurd::Right;
+        } else if keyboard_input.pressed(KeyCode::ArrowUp) {
+            player.gaurd = Gaurd::Up;
+        } else if keyboard_input.pressed(KeyCode::ArrowDown) {
+            player.gaurd = Gaurd::Down;
         }
+
+        if prev_gaurd != player.gaurd {
+            info!("player 1 gaurd: {:?}", player.gaurd);
+        }
+
+        if Some(Player::Two) == world_state.lunger && prev_gaurd != player.gaurd
+        // && player.gaurd.parries(player2.gaurd)
+        {
+            info!("player 1 parried and stole right of way");
+            world_state.lunger = None;
+            world_state.row = Some(Player::One);
+        }
+        // }
     }
 }

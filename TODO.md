@@ -11,4 +11,6 @@
         if it involves the computer contrtolled fighter AI, it goes here.
 - [x] enable parrying
 - [x] enable ai player
-- [ ] rework parrying after ai player can fight back
+- [x] rework parrying after ai player can fight back
+- [ ] add bounds detection
+- [ ] stop fighters from flipping sides. (detect side flip and resset match if so.)
