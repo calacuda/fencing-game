@@ -26,12 +26,7 @@ fn spawn_fighter_one(
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
-    // spawned_fighters: Query<Entity, With<Fighter>>,
 ) {
-    // spawned_fighters
-    //     .iter()
-    //     .for_each(|fighter| commands.entity(fighter).despawn());
-
     let window = window_query.get_single().unwrap();
     let texture = asset_server.load("sprites/fighter-sprites.png");
     let layout = TextureAtlasLayout::from_grid(Vec2::new(32.0, 32.0), 2, 1, None, None);
@@ -83,10 +78,17 @@ pub fn player_movement(
             if keyboard_input.pressed(KeyCode::KeyA) {
                 // move left (retreat)
                 player.set_action(Move::Retreat);
+
+                if world_state.row == Some(Player::One) {
+                    world_state.row = None;
+                }
             } else if keyboard_input.pressed(KeyCode::KeyD) {
                 // move right (advance)
                 player.set_action(Move::Advance);
-                world_state.row = Some(Player::One);
+
+                if world_state.row.is_none() {
+                    world_state.row = Some(Player::One);
+                }
             } else if keyboard_input.pressed(KeyCode::KeyW) {
                 // lunge
                 player.set_action(Move::Lunge);

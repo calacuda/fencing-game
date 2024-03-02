@@ -10,5 +10,5 @@
     - [x] computer AI player (called: ai)
         if it involves the computer contrtolled fighter AI, it goes here.
 - [x] enable parrying
-- [ ] enable ai player
+- [x] enable ai player
 - [ ] rework parrying after ai player can fight back
