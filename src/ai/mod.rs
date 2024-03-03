@@ -4,7 +4,7 @@ use crate::{
     player::{P2Timer, PlayerMarker},
     state::{GameState, Screen},
 };
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::prelude::*;
 
 pub struct AiPlugin;
 
@@ -19,11 +19,9 @@ impl Plugin for AiPlugin {
 
 fn spawn_fighter_two(
     mut commands: Commands,
-    window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
 ) {
-    let window = window_query.get_single().unwrap();
     let texture = asset_server.load("sprites/fighter-sprites.png");
     let layout = TextureAtlasLayout::from_grid(Vec2::new(32.0, 32.0), 2, 1, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
@@ -48,30 +46,13 @@ fn spawn_fighter_two(
                 layout: texture_atlas_layout,
                 index: 0,
             },
-            transform: Transform::from_xyz(
-                (window.width() / 2.0) + (32.0 * 1.0),
-                window.height() / 2.0,
-                0.0,
-            ),
             sprite: Sprite {
                 // custom_size: Some(Vec2::new(100., 100.)),
                 flip_x: true,
                 ..default()
             },
             ..default()
-        }, // SpriteBundle {
-           //     texture: asset_server.load("sprites/player-2.png"),
-           //     transform: Transform::from_xyz(
-           //         (window.width() / 2.0) + 40.0,
-           //         window.height() / 4.0,
-           //         0.0,
-           //     ),
-           //     // sprite: Sprite {
-           //     //     custom_size: Some(Vec2::new(100., 100.)),
-           //     //     ..default()
-           //     // },
-           //     ..default()
-           // },
+        },
     ));
 }
 
@@ -80,21 +61,19 @@ fn setup_p2_timer(mut commands: Commands, time: Res<Time>) {
 }
 
 pub fn fighter_2_movement(
-    mut fighter_2_query: Query<
-        (&mut Fighter, &mut Transform, &mut TextureAtlas),
-        Without<PlayerMarker>,
-    >,
+    mut fighter_2_query: Query<(&mut Fighter, &mut TextureAtlas), Without<PlayerMarker>>,
     player1_query: Query<&Fighter, With<PlayerMarker>>,
     mut p2_timer: ResMut<P2Timer>,
     time: Res<Time>,
     mut world_state: ResMut<GameState>, // needed to change who has the Right of way
 ) {
-    if let (Ok((mut fighter, mut transform, mut atlas)), Ok(player1)) =
+    if let (Ok((mut fighter, mut atlas)), Ok(player1)) =
         (fighter_2_query.get_single_mut(), player1_query.get_single())
     {
         if !fighter.action.blocked() && p2_timer.0.elapsed_seconds() >= 0.25 {
-            // TODO: do computer player action
+            // do computer player action
             let distance = distance(player1.position, fighter.position);
+            let prev_gaurd = fighter.gaurd.clone();
 
             if distance >= 4.0 {
                 // advance if player too far,
@@ -107,20 +86,22 @@ pub fn fighter_2_movement(
                 if world_state.row == Some(Player::Two) {
                     world_state.row = None;
                 }
-            } else if distance <= 3.5 && world_state.row == Some(Player::Two) {
+            } else if distance <= 1.75 && world_state.row == Some(Player::Two) {
                 // lunge if in range
                 fighter.set_action(Move::Lunge);
                 // world_state.row = None;
                 atlas.index += 1;
                 world_state.lunger = Some(Player::Two);
-            } else if player1.lunged() && world_state.row == Some(Player::One) && distance >= 1.5 {
+            } else if player1.lunged() && world_state.row == Some(Player::One) && distance <= 1.75 {
                 // parry if enemy lunges and has right of way
-                fighter.gaurd = match fighter.gaurd {
-                    Gaurd::Up => Gaurd::Left,
-                    Gaurd::Down => Gaurd::Right,
-                    Gaurd::Left => Gaurd::Down,
-                    Gaurd::Right => Gaurd::Up,
-                };
+                // fighter.gaurd = match fighter.gaurd {
+                //     Gaurd::Up => Gaurd::Left,
+                //     Gaurd::Down => Gaurd::Right,
+                //     Gaurd::Left => Gaurd::Down,
+                //     Gaurd::Right => Gaurd::Up,
+                // };
+                // TODO: make fail (but only sometimes)
+                fighter.gaurd = player1.gaurd;
 
                 world_state.row = Some(Player::Two);
             } else if world_state.row == Some(Player::Two)
@@ -132,13 +113,21 @@ pub fn fighter_2_movement(
             // else {
             //     fighter.set_action(Move::EnGarde);
             // }
+
+            if prev_gaurd != fighter.gaurd
+                && player1.lunged()
+                && fighter.gaurd.parries(player1.gaurd)
+            {
+                fighter.parrying = true;
+            } else if !(player1.lunged() && fighter.gaurd.parries(player1.gaurd)) {
+                fighter.parrying = false;
+            }
         }
 
-        let (sprite_d, pos_d) = fighter.update_movement(time.clone());
+        let pos_d = fighter.update_movement(time.clone());
         // info!("{:?} -> {}", player.action.act, movement);
 
         fighter.position -= pos_d;
-        transform.translation -= sprite_d;
 
         if p2_timer.0.elapsed_seconds() >= 0.25 {
             *p2_timer = P2Timer(time.clone());

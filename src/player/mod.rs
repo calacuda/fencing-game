@@ -2,7 +2,7 @@ use crate::{
     fighter::*,
     state::{GameState, Screen},
 };
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::prelude::*;
 
 #[derive(Component)]
 pub struct PlayerMarker;
@@ -23,11 +23,9 @@ impl Plugin for PlayerPlugin {
 
 fn spawn_fighter_one(
     mut commands: Commands,
-    window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
 ) {
-    let window = window_query.get_single().unwrap();
     let texture = asset_server.load("sprites/fighter-sprites.png");
     let layout = TextureAtlasLayout::from_grid(Vec2::new(32.0, 32.0), 2, 1, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
@@ -52,15 +50,6 @@ fn spawn_fighter_one(
                 layout: texture_atlas_layout,
                 index: 0,
             },
-            transform: Transform::from_xyz(
-                (window.width() / 2.0) - (32.0 * 1.0),
-                window.height() / 2.0,
-                0.0,
-            ),
-            // sprite: Sprite {
-            //     custom_size: Some(Vec2::new(100., 100.)),
-            //     ..default()
-            // },
             ..default()
         },
         PlayerMarker,
@@ -69,11 +58,11 @@ fn spawn_fighter_one(
 
 pub fn player_movement(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut player_query: Query<(&mut Fighter, &mut Transform, &mut TextureAtlas), With<PlayerMarker>>,
+    mut player_query: Query<(&mut Fighter, &mut TextureAtlas), With<PlayerMarker>>,
     time: Res<Time>,
     mut world_state: ResMut<GameState>,
 ) {
-    if let Ok((mut player, mut transform, mut atlas)) = player_query.get_single_mut() {
+    if let Ok((mut player, mut atlas)) = player_query.get_single_mut() {
         if !player.action.blocked() {
             if keyboard_input.pressed(KeyCode::KeyA) {
                 // move left (retreat)
@@ -100,11 +89,10 @@ pub fn player_movement(
             }
         }
 
-        let (sprite_d, pos_d) = player.update_movement(time.clone());
+        let pos_d = player.update_movement(time.clone());
         // info!("{:?} -> {}", player.action.act, movement);
 
         player.position += pos_d;
-        transform.translation += sprite_d;
     } else {
         error!("no player found");
     }
@@ -127,33 +115,40 @@ pub fn player_blade_play(
     _time: Res<Time>,
     mut world_state: ResMut<GameState>,
 ) {
-    if let (Ok(mut player), Ok(_player2)) =
+    if let (Ok(mut player), Ok(player2)) =
         (player_query.get_single_mut(), player2_query.get_single())
     {
-        /* if !player.action.blocked() { */
-        let prev_gaurd = player.gaurd.clone();
+        if !player.action.blocked() {
+            let prev_gaurd = player.gaurd.clone();
 
-        if keyboard_input.pressed(KeyCode::ArrowLeft) {
-            player.gaurd = Gaurd::Left;
-        } else if keyboard_input.pressed(KeyCode::ArrowRight) {
-            player.gaurd = Gaurd::Right;
-        } else if keyboard_input.pressed(KeyCode::ArrowUp) {
-            player.gaurd = Gaurd::Up;
-        } else if keyboard_input.pressed(KeyCode::ArrowDown) {
-            player.gaurd = Gaurd::Down;
-        }
+            if keyboard_input.pressed(KeyCode::ArrowLeft) {
+                player.gaurd = Gaurd::Left;
+            } else if keyboard_input.pressed(KeyCode::ArrowRight) {
+                player.gaurd = Gaurd::Right;
+            } else if keyboard_input.pressed(KeyCode::ArrowUp) {
+                player.gaurd = Gaurd::Up;
+            } else if keyboard_input.pressed(KeyCode::ArrowDown) {
+                player.gaurd = Gaurd::Down;
+            }
 
-        if prev_gaurd != player.gaurd {
-            info!("player 1 gaurd: {:?}", player.gaurd);
-        }
+            if prev_gaurd != player.gaurd {
+                debug!("player 1 gaurd change: {:?}", player.gaurd);
+            }
 
-        if Some(Player::Two) == world_state.lunger && prev_gaurd != player.gaurd
-        // && player.gaurd.parries(player2.gaurd)
-        {
-            info!("player 1 parried and stole right of way");
-            world_state.lunger = None;
-            world_state.row = Some(Player::One);
+            if prev_gaurd != player.gaurd && player2.lunged() && player.gaurd.parries(player2.gaurd)
+            {
+                player.parrying = true;
+            } else if !(player2.lunged() && player.gaurd.parries(player2.gaurd)) {
+                player.parrying = false;
+            }
+
+            if Some(Player::Two) == world_state.lunger && prev_gaurd != player.gaurd
+            // && player.gaurd.parries(player2.gaurd)
+            {
+                info!("player 1 parried and stole right of way");
+                world_state.lunger = None;
+                world_state.row = Some(Player::One);
+            }
         }
-        // }
     }
 }

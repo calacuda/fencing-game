@@ -16,30 +16,25 @@ pub enum Screen {
 
 #[derive(Resource, Debug)]
 pub struct GameState {
-    // pub screen: Screen,
     pub row: Option<Player>,
     pub p1_score: Score,
     pub p2_score: Score,
     pub lunger: Option<Player>,
-    // pub lunge_time: Option<Time>,
 }
 
 impl GameState {
     pub fn new() -> Self {
         Self {
-            // screen: Screen::Welcome,
             row: None,
             p1_score: Score::default(),
             p2_score: Score::default(),
             lunger: None,
-            // lunge_time: None,
         }
     }
 
     pub fn reset(&mut self) {
         self.row = None;
         self.lunger = None;
-        // self.lunge_time = None;
     }
 
     pub fn lunge(&mut self, player: Player) {
@@ -47,9 +42,36 @@ impl GameState {
             self.lunger = Some(player);
         }
     }
+
+    pub fn score_touch(&mut self, player: Player) {
+        match player {
+            Player::One => {
+                if self.p1_score.touches == 14 {
+                    info!("match over!");
+                    self.p1_score.touches = 0;
+                    self.p2_score.touches = 0;
+                }
+                self.p1_score.score_touch();
+            }
+            Player::Two => {
+                if self.p2_score.touches == 14 {
+                    info!("match over!");
+                    self.p1_score.touches = 0;
+                    self.p2_score.touches = 0;
+                }
+
+                self.p2_score.score_touch();
+            }
+        }
+
+        info!(
+            "player 1: ({}/15) | player 2: ({}/15)",
+            self.p1_score.touches, self.p2_score.touches
+        );
+    }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct Score {
     /// how many touches for the current match this fighter has scored.
     pub touches: u8,
@@ -62,7 +84,6 @@ impl Score {
         self.touches += 1;
 
         if self.touches == 15 {
-            info!("match over.");
             self.matches += 1;
             self.touches = 0;
         }

@@ -4,7 +4,7 @@
     - [x] startup
         if it runs at start up, it goes here.
     - [x] player
-        it it involve spawning, moving, or controlling the player character, it goes here.
+        if it involve spawning, moving, or controlling the player character, it goes here.
     - [x] combat
         if it involves combat logic (scoring, detecting a win, etc) it goes here.
     - [x] computer AI player (called: ai)
@@ -12,5 +12,10 @@
 - [x] enable parrying
 - [x] enable ai player
 - [x] rework parrying after ai player can fight back
-- [ ] add bounds detection
-- [ ] stop fighters from flipping sides. (detect side flip and resset match if so.)
+- [x] add bounds detection
+- [x] stop fighters from flipping sides. (detect side flip and resset match if so.)
+- [x] fix bounds detection
+- [x] only set Fighter.position and make another system to set sprite location based on that
+- [ ] add icon to represent the player's and the opponent's gaurd
+- [ ] add score board
+- [x] make parrying, gaurd dependant

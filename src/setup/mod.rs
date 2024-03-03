@@ -35,7 +35,7 @@ fn setup_camera(
     // camera.projection.scaling_mode = ScalingMode::FixedHorizontal(800.0);
     camera.transform = Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0);
     // camera.projection.scaling_mode = ScalingMode::FixedVertical(200.0);
-    camera.projection.scaling_mode = ScalingMode::FixedVertical(200.0);
+    camera.projection.scaling_mode = ScalingMode::FixedVertical(300.0);
 
     commands.spawn((camera, GameView));
 }

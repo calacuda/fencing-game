@@ -29,7 +29,7 @@ pub struct Fighter {
 
 impl Fighter {
     /// takes the time struct from the game, returns an amount to move the players sprite.
-    pub fn update_movement(&mut self, time: Time) -> (Vec3, f32) {
+    pub fn update_movement(&mut self, time: Time) -> f32 {
         let b1 = self.action.blocked();
         let res = self.action.step(time.delta_seconds());
         let b2 = self.action.blocked();
@@ -68,11 +68,13 @@ pub enum Gaurd {
 }
 
 impl Gaurd {
-    // pub fn parries(&self, other: Self) -> bool {
-    //     match self {
-    //         Self::Up && if other == Self::
-    //     }
-    // }
+    pub fn parries(&self, other: Self) -> bool {
+        // match (self, other) {
+        //     (Self::Up, Self::Up) => true,
+        //     _ => false,
+        // }
+        *self == other
+    }
 }
 
 #[derive(Debug)]
@@ -101,13 +103,14 @@ pub enum Player {
     Two,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Move {
     Advance,
     Retreat,
     Jump,
     Lunge,
     EnGarde,
+    // TODO: add DoubleAdvance and DoubleRetreat
 }
 
 impl Into<((f32, f32), Vec3)> for Move {
@@ -119,6 +122,18 @@ impl Into<((f32, f32), Vec3)> for Move {
             Self::Lunge => ((1.0, 0.8), Vec3::new(0.75, 0.0, 0.0)),
             // f32::NEG_INFINITY makes this non-blocking
             Self::EnGarde => ((f32::NEG_INFINITY, 0.0), Vec3::ZERO),
+        }
+    }
+}
+
+impl From<Move> for f32 {
+    fn from(value: Move) -> Self {
+        match value {
+            Move::Advance => 1.0,
+            Move::Retreat => 1.0,
+            Move::Jump => 1.5,
+            Move::Lunge => 4.0,
+            Move::EnGarde => 0.0,
         }
     }
 }
@@ -151,15 +166,12 @@ impl Action {
         self.block_for >= 0.0
     }
 
-    fn step(&mut self, time_d: f32) -> (Vec3, f32) {
+    fn step(&mut self, time_d: f32) -> f32 {
         self.block_for -= time_d;
         let res = if self.moved >= 0.0 {
-            (
-                self.dir_vec * PLAYER_SPEED * 32.0 * time_d,
-                (self.dir_vec * PLAYER_SPEED * time_d)[0],
-            )
+            (self.dir_vec * PLAYER_SPEED * f32::from(self.act) * time_d)[0]
         } else {
-            (Vec3::ZERO, 0.0)
+            0.0
         };
 
         self.moved -= time_d;
