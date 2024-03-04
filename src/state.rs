@@ -3,12 +3,21 @@ use bevy::prelude::*;
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash, States)]
 pub enum Screen {
+    /// setup the window and stuff, is a transient state only entered once when the game is
+    /// initially launched
     #[default]
     Setup,
+    /// the welcome screen (choose between playing the game (ModeSelect), view/edit controls
+    /// (Controls), or Rules (HowToPlay))
     Welcome,
+    /// choose to duel the computer, duel a human (over a LAN connection), or spectate a human vs.
+    /// human match
     ModeSelect,
+    /// represents that the bout is being ongoing
     Game,
+    /// the pause menu (only accessable when dueling the computer)
     PauseMenu,
+    /// used to clean up from last bout and setup for next bout.
     NewBout,
     /// used to announce that a player scored the touch
     ScoreBoard,
@@ -18,6 +27,10 @@ pub enum Screen {
     Controls,
     /// explains the rules/icons/interface to the player
     HowToPlay,
+    /// announces which player scored the touch
+    TouchScored,
+    /// announces which player scored the touch
+    MatchWon,
 }
 
 #[derive(Resource, Debug)]

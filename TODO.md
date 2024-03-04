@@ -28,8 +28,8 @@
     - [ ] show pause menu when paused
     - [ ] pause player actions, computer actions, & computer timer when paused
 - [ ] add screens
-    - [ ] welcome screen (`Play` or `Show Controls`)
-    - [ ] mode select screen (`vs. computer` or `vs. human (LAN)`)
+    - [ ] welcome screen (`Play`, `Controls`, or `How To Play`)
+    - [ ] mode select screen (`vs. computer`, `vs. human (LAN)`, or `spectate`)
     - [ ] controls screen (to show/edit controls)
     - [ ] "how to play" screen (shows how to play the game)
     - [ ] touch scored screen (announce the scoring of a touch)
