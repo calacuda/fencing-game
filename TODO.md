@@ -21,3 +21,4 @@
 - [x] make parrying, gaurd dependant
 - [ ] make gaurd icon only apear breafly when the player changes gaurds and at the beginning of the match
 - [ ] implement a beat (parry with out a lunge to steal right of way)
+- [ ] add a q-learning agent to control the computer player
