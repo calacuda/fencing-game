@@ -77,6 +77,17 @@ impl Gaurd {
     }
 }
 
+impl Into<usize> for Gaurd {
+    fn into(self) -> usize {
+        match self {
+            Self::Right => 2,
+            Self::Left => 1,
+            Self::Up => 3,
+            Self::Down => 0,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum Stance {
     /// swordhand in fort.

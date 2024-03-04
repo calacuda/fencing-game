@@ -16,6 +16,7 @@
 - [x] stop fighters from flipping sides. (detect side flip and resset match if so.)
 - [x] fix bounds detection
 - [x] only set Fighter.position and make another system to set sprite location based on that
-- [ ] add icon to represent the player's and the opponent's gaurd
+- [x] add icon to represent the player's and the opponent's gaurd
 - [ ] add score board
 - [x] make parrying, gaurd dependant
+- [ ] make gaurd icon only apear breafly when the player changes gaurds and at the beginning of the match

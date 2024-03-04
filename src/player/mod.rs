@@ -1,4 +1,5 @@
 use crate::{
+    combat::GaurdIconMarker,
     fighter::*,
     state::{GameState, Screen},
 };
@@ -15,6 +16,7 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnExit(Screen::NewBout), spawn_fighter_one)
+            .add_systems(OnExit(Screen::NewBout), spawn_p1_gaurd_icon)
             .add_systems(Update, player_movement.run_if(in_state(Screen::Game)))
             .add_systems(Update, reset_player.run_if(in_state(Screen::Game)))
             .add_systems(Update, player_blade_play.run_if(in_state(Screen::Game)));
@@ -52,6 +54,34 @@ fn spawn_fighter_one(
             },
             ..default()
         },
+        PlayerMarker,
+    ));
+}
+
+fn spawn_p1_gaurd_icon(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
+) {
+    let texture = asset_server.load("sprites/gaurd-icons.png");
+    let layout = TextureAtlasLayout::from_grid(Vec2::new(50.0, 50.0), 4, 1, None, None);
+    let texture_atlas_layout = texture_atlas_layouts.add(layout);
+
+    commands.spawn((
+        SpriteSheetBundle {
+            texture,
+            atlas: TextureAtlas {
+                layout: texture_atlas_layout,
+                index: 1,
+            },
+            sprite: Sprite {
+                custom_size: Some(Vec2::new(32., 32.)),
+                ..default()
+            },
+
+            ..default()
+        },
+        GaurdIconMarker,
         PlayerMarker,
     ));
 }

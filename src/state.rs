@@ -12,6 +12,8 @@ pub enum Screen {
     NewBout,
     /// used to announce that a player scored the touch
     ScoreBoard,
+    /// used to announce that a player won the match
+    Victory,
 }
 
 #[derive(Resource, Debug)]
@@ -51,6 +53,7 @@ impl GameState {
                     self.p1_score.touches = 0;
                     self.p2_score.touches = 0;
                 }
+
                 self.p1_score.score_touch();
             }
             Player::Two => {

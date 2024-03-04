@@ -1,4 +1,5 @@
 use crate::{
+    combat::GaurdIconMarker,
     distance,
     fighter::*,
     player::{P2Timer, PlayerMarker},
@@ -6,12 +7,16 @@ use crate::{
 };
 use bevy::prelude::*;
 
+#[derive(Component)]
+pub struct Player2Marker;
+
 pub struct AiPlugin;
 
 impl Plugin for AiPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnExit(Screen::NewBout), spawn_fighter_two)
             .add_systems(OnExit(Screen::NewBout), setup_p2_timer)
+            .add_systems(OnExit(Screen::NewBout), spawn_p2_gaurd_icon)
             .add_systems(Update, fighter_2_movement.run_if(in_state(Screen::Game)))
             .add_systems(Update, reset_fighter.run_if(in_state(Screen::Game)));
     }
@@ -53,6 +58,36 @@ fn spawn_fighter_two(
             },
             ..default()
         },
+        Player2Marker,
+    ));
+}
+
+fn spawn_p2_gaurd_icon(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
+) {
+    let texture = asset_server.load("sprites/gaurd-icons.png");
+    let layout = TextureAtlasLayout::from_grid(Vec2::new(50.0, 50.0), 4, 1, None, None);
+    let texture_atlas_layout = texture_atlas_layouts.add(layout);
+
+    // info!("spawning p2 gaurd icon");
+    commands.spawn((
+        SpriteSheetBundle {
+            texture,
+            atlas: TextureAtlas {
+                layout: texture_atlas_layout,
+                index: 1,
+            },
+            sprite: Sprite {
+                custom_size: Some(Vec2::new(32., 32.)),
+                flip_x: true,
+                flip_y: true,
+                ..default()
+            },
+            ..default()
+        },
+        GaurdIconMarker,
     ));
 }
 

@@ -1,10 +1,14 @@
 use crate::{
+    ai::Player2Marker,
     distance,
     fighter::*,
     player::PlayerMarker,
     state::{GameState, Screen},
 };
 use bevy::{prelude::*, window::PrimaryWindow};
+
+#[derive(Component)]
+pub struct GaurdIconMarker;
 
 pub struct CombatPlugin;
 
@@ -15,7 +19,6 @@ impl Plugin for CombatPlugin {
             .add_systems(Update, bounds_limiter.run_if(in_state(Screen::Game)))
             // .add_systems(Update, victory_check.run_if(in_state(Screen::Game)))
             .add_systems(Update, position_fighters.run_if(in_state(Screen::Game)));
-        // .add_systems(Update, parried.run_if(in_state(Screen::Game)));
     }
 }
 
@@ -98,13 +101,52 @@ fn bounds_limiter(
 }
 
 fn position_fighters(
-    mut player1_query: Query<(&Fighter, &mut Transform), With<PlayerMarker>>,
-    mut player2_query: Query<(&Fighter, &mut Transform), Without<PlayerMarker>>,
+    mut player1_query: Query<
+        (&Fighter, &mut Transform),
+        (
+            With<PlayerMarker>,
+            Without<Player2Marker>,
+            Without<GaurdIconMarker>,
+        ),
+    >,
+    mut player2_query: Query<
+        (&Fighter, &mut Transform),
+        (
+            With<Player2Marker>,
+            Without<PlayerMarker>,
+            Without<GaurdIconMarker>,
+        ),
+    >,
+    mut p1_gaurd_query: Query<
+        (&mut Transform, &mut TextureAtlas),
+        (
+            With<GaurdIconMarker>,
+            // Without<Fighter>,
+            With<PlayerMarker>,
+            // Without<Player2Marker>,
+        ),
+    >,
+    mut p2_gaurd_query: Query<
+        (&mut Transform, &mut TextureAtlas),
+        (
+            With<GaurdIconMarker>,
+            // Without<Fighter>,
+            Without<PlayerMarker>,
+            // With<Player2Marker>,
+        ),
+    >,
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
-    if let (Ok((p1, mut p1_sprite)), Ok((p2, mut p2_sprite))) = (
+    if let (
+        Ok((p1, mut p1_sprite)),
+        Ok((p2, mut p2_sprite)),
+        Ok((mut p1_gaurd_sprite, mut p1_atlas)),
+        Ok((mut p2_gaurd_sprite, mut p2_atlas)),
+    ) = (
         player1_query.get_single_mut(),
         player2_query.get_single_mut(),
+        p1_gaurd_query.get_single_mut(),
+        p2_gaurd_query.get_single_mut(),
     ) {
         let window = window_query.get_single().unwrap();
         // let piste_len = 14.0;
@@ -116,42 +158,30 @@ fn position_fighters(
             0.0,
         );
 
+        p1_gaurd_sprite.translation = Vec3::new(
+            (window.width() / 2.0) + (32.0 * p1_pos),
+            window.height() / 2.0 + (32.0 * 1.5),
+            0.0,
+        );
+
+        p1_atlas.index = p1.gaurd.into();
+
         p2_sprite.translation = Vec3::new(
             (window.width() / 2.0) + (32.0 * p2_pos),
             window.height() / 2.0,
             0.0,
         );
+
+        p2_gaurd_sprite.translation = Vec3::new(
+            (window.width() / 2.0) + (32.0 * p2_pos),
+            window.height() / 2.0 + (32.0 * 1.5),
+            0.0,
+        );
+
+        p2_atlas.index = p2.gaurd.into();
+    } else {
+        error!(
+            "could not get one of: player1/2, player1/2 sprite, player1/2 gaurd icon sprite/atlas"
+        )
     }
 }
-
-// fn victory_check(mut world_state: ResMut<GameState>) {
-//     if
-// }
-
-// fn reset_players(
-//     p1: (&mut Fighter, &mut Transform),
-//     p2: (&mut Fighter, &mut Transform),
-//     window: &Window,
-// ) {
-//     // reset p1 & p2 locations
-//     p1.0.position = -2.0;
-//     p2.0.position = 2.0;
-//     // reset p1 & p2 sprite locations
-//     *p1.1 = Transform::from_xyz(
-//         (window.width() / 2.0) - (32.0 * 1.0),
-//         window.height() / 4.0,
-//         0.0,
-//     );
-//     *p2.1 = Transform::from_xyz(
-//         (window.width() / 2.0) + (32.0 * 1.0),
-//         window.height() / 4.0,
-//         0.0,
-//     );
-//     // reset action
-//     p1.0.action = Action::from(Move::EnGarde);
-//     p2.0.action = Action::from(Move::EnGarde);
-// }
-
-// pub fn rock_paper_scisors(g1: Gaurd, g2: Gaurd) -> bool {
-//
-// }

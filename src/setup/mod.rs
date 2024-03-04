@@ -1,4 +1,4 @@
-use crate::{state::Screen, Fighter};
+use crate::{combat::GaurdIconMarker, state::Screen, Fighter};
 use bevy::{core::FrameCount, prelude::*, window::PrimaryWindow};
 
 pub struct SetupPlugin;
@@ -47,6 +47,7 @@ fn make_visible(
 ) {
     // The delay may be different for your app or system.
     if frames.0 == 5 {
+        // info!("making window visible");
         window.single_mut().visible = true;
         // TODO: change this once welcome and game mode selection screens get written.
         next_state.set(Screen::NewBout)
@@ -56,9 +57,14 @@ fn make_visible(
 fn start_bout(
     mut commands: Commands,
     mut next_state: ResMut<NextState<Screen>>,
-    spawned_fighters: Query<Entity, With<Fighter>>,
+    fighters: Query<Entity, With<Fighter>>,
+    gaurd_icons: Query<Entity, With<GaurdIconMarker>>,
+    // spawned_fighters: Query<Entity>,
 ) {
-    spawned_fighters
+    fighters
+        .iter()
+        .for_each(|fighter| commands.entity(fighter).despawn());
+    gaurd_icons
         .iter()
         .for_each(|fighter| commands.entity(fighter).despawn());
     next_state.set(Screen::Game)
