@@ -23,6 +23,10 @@
 - [ ] implement a beat (parry with out a lunge to steal right of way)
 - [ ] add a q-learning agent to control the computer player
 - [ ] add multiplayer LAN games
+- [ ] add pausing for `vs. comp` games
+    - [ ] make a pause menu,
+    - [ ] show pause menu when paused
+    - [ ] pause player actions, computer actions, & computer timer when paused
 - [ ] add screens
     - [ ] welcome screen (`Play` or `Show Controls`)
     - [ ] mode select screen (`vs. computer` or `vs. human (LAN)`)
