@@ -14,6 +14,10 @@ pub enum Screen {
     ScoreBoard,
     /// used to announce that a player won the match
     Victory,
+    /// used to show/edit the controls,
+    Controls,
+    /// explains the rules/icons/interface to the player
+    HowToPlay,
 }
 
 #[derive(Resource, Debug)]
