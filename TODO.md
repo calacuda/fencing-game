@@ -30,4 +30,7 @@
 - [ ] add screens
     - [ ] welcome screen (`Play` or `Show Controls`)
     - [ ] mode select screen (`vs. computer` or `vs. human (LAN)`)
-    - [ ] controls screen (to show controls)
+    - [ ] controls screen (to show/edit controls)
+    - [ ] "how to play" screen (shows how to play the game)
+    - [ ] touch scored screen (announce the scoring of a touch)
+    - [ ] match victory screen (announce that a player won the match)
