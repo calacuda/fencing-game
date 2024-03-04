@@ -10,6 +10,12 @@ use bevy::{prelude::*, window::PrimaryWindow};
 #[derive(Component)]
 pub struct GaurdIconMarker;
 
+#[derive(Component)]
+pub struct PlayerScore;
+
+#[derive(Component)]
+pub struct ScoreBoard;
+
 pub struct CombatPlugin;
 
 impl Plugin for CombatPlugin {
@@ -17,6 +23,7 @@ impl Plugin for CombatPlugin {
         app.add_systems(Update, touch_scored.run_if(in_state(Screen::Game)))
             .add_systems(Update, side_flip_detect.run_if(in_state(Screen::Game)))
             .add_systems(Update, bounds_limiter.run_if(in_state(Screen::Game)))
+            .add_systems(OnExit(Screen::NewBout), score_board)
             // .add_systems(Update, victory_check.run_if(in_state(Screen::Game)))
             .add_systems(Update, position_fighters.run_if(in_state(Screen::Game)));
     }
@@ -43,7 +50,7 @@ fn touch_scored(
             && !p2.parrying
             && distance <= range
         {
-            info!("Player 1 scored the touch");
+            info!("Player 1 scored");
             world_state.score_touch(Player::One);
             world_state.reset();
             next_state.set(Screen::NewBout);
@@ -55,7 +62,7 @@ fn touch_scored(
             && !p1.parrying
             && distance <= range
         {
-            info!("Player 2 scored the touch");
+            info!("Player 2 scored");
             world_state.score_touch(Player::Two);
             world_state.reset();
             next_state.set(Screen::NewBout);
@@ -180,8 +187,63 @@ fn position_fighters(
 
         p2_atlas.index = p2.gaurd.into();
     } else {
-        error!(
-            "could not get one of: player1/2, player1/2 sprite, player1/2 gaurd icon sprite/atlas"
-        )
+        // error!(
+        //     "could not get one of: player1/2, player1/2 sprite, player1/2 gaurd icon sprite/atlas"
+        // )
     }
+}
+
+fn score_board(mut commands: Commands, world_state: Res<GameState>) {
+    commands.spawn((
+        // Create a TextBundle that has a Text with a single section.
+        TextBundle::from_section(
+            // Accepts a `String` or any type that converts into a `String`, such as `&str`
+            format!(
+                "({}/15/{})",
+                world_state.p1_score.touches, world_state.p1_score.matches
+            ),
+            TextStyle {
+                // This font is loaded and will be used instead of the default font.
+                // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                font_size: 32.0,
+                ..default()
+            },
+        ) // Set the justification of the Text
+        .with_text_justify(JustifyText::Center)
+        // Set the style of the TextBundle itself.
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Vw(12.5),
+            left: Val::Vw(12.5),
+            ..default()
+        }),
+        PlayerScore,
+        ScoreBoard,
+    ));
+
+    commands.spawn((
+        // Create a TextBundle that has a Text with a single section.
+        TextBundle::from_section(
+            // Accepts a `String` or any type that converts into a `String`, such as `&str`
+            format!(
+                "({}/15/{})",
+                world_state.p2_score.touches, world_state.p2_score.matches
+            ),
+            TextStyle {
+                // This font is loaded and will be used instead of the default font.
+                // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                font_size: 32.0,
+                ..default()
+            },
+        ) // Set the justification of the Text
+        .with_text_justify(JustifyText::Center)
+        // Set the style of the TextBundle itself.
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Vw(12.5), // Val::Px(5.0),
+            right: Val::Vw(12.5),
+            ..default()
+        }),
+        ScoreBoard,
+    ));
 }

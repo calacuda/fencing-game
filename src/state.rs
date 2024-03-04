@@ -50,7 +50,6 @@ impl GameState {
             Player::One => {
                 if self.p1_score.touches == 14 {
                     info!("match over!");
-                    self.p1_score.touches = 0;
                     self.p2_score.touches = 0;
                 }
 
@@ -60,17 +59,16 @@ impl GameState {
                 if self.p2_score.touches == 14 {
                     info!("match over!");
                     self.p1_score.touches = 0;
-                    self.p2_score.touches = 0;
                 }
 
                 self.p2_score.score_touch();
             }
         }
 
-        info!(
-            "player 1: ({}/15) | player 2: ({}/15)",
-            self.p1_score.touches, self.p2_score.touches
-        );
+        // info!(
+        //     "player 1: ({}/15) | player 2: ({}/15)",
+        //     self.p1_score.touches, self.p2_score.touches
+        // );
     }
 }
 

@@ -1,4 +1,8 @@
-use crate::{combat::GaurdIconMarker, state::Screen, Fighter};
+use crate::{
+    combat::{GaurdIconMarker, ScoreBoard},
+    state::Screen,
+    Fighter,
+};
 use bevy::{core::FrameCount, prelude::*, window::PrimaryWindow};
 
 pub struct SetupPlugin;
@@ -35,7 +39,8 @@ fn setup_camera(
     // camera.projection.scaling_mode = ScalingMode::FixedHorizontal(800.0);
     camera.transform = Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0);
     // camera.projection.scaling_mode = ScalingMode::FixedVertical(200.0);
-    camera.projection.scaling_mode = ScalingMode::FixedVertical(300.0);
+    // camera.projection.scaling_mode = ScalingMode::FixedVertical(300.0);
+    camera.projection.scaling_mode = ScalingMode::FixedHorizontal(16.0 * 32.0);
 
     commands.spawn((camera, GameView));
 }
@@ -59,6 +64,7 @@ fn start_bout(
     mut next_state: ResMut<NextState<Screen>>,
     fighters: Query<Entity, With<Fighter>>,
     gaurd_icons: Query<Entity, With<GaurdIconMarker>>,
+    score_boards: Query<Entity, With<ScoreBoard>>,
     // spawned_fighters: Query<Entity>,
 ) {
     fighters
@@ -66,6 +72,10 @@ fn start_bout(
         .for_each(|fighter| commands.entity(fighter).despawn());
     gaurd_icons
         .iter()
-        .for_each(|fighter| commands.entity(fighter).despawn());
+        .for_each(|icon| commands.entity(icon).despawn());
+    score_boards
+        .iter()
+        .for_each(|board| commands.entity(board).despawn());
+
     next_state.set(Screen::Game)
 }

@@ -118,7 +118,7 @@ pub enum Player {
 pub enum Move {
     Advance,
     Retreat,
-    Jump,
+    // Jump,
     Lunge,
     EnGarde,
     // TODO: add DoubleAdvance and DoubleRetreat
@@ -129,8 +129,8 @@ impl Into<((f32, f32), Vec3)> for Move {
         match self {
             Self::Advance => ((0.5, 0.35), Vec3::new(0.75, 0.0, 0.0)),
             Self::Retreat => ((0.5, 0.35), Vec3::new(-0.75, 0.0, 0.0)),
-            Self::Jump => ((0.75, 0.5), Vec3::new(0.0, 1.25, 0.0)),
-            Self::Lunge => ((1.0, 0.8), Vec3::new(0.75, 0.0, 0.0)),
+            // Self::Jump => ((0.75, 0.5), Vec3::new(0.0, 1.25, 0.0)),
+            Self::Lunge => ((0.75, 0.2), Vec3::new(0.75, 0.0, 0.0)),
             // f32::NEG_INFINITY makes this non-blocking
             Self::EnGarde => ((f32::NEG_INFINITY, 0.0), Vec3::ZERO),
         }
@@ -142,7 +142,7 @@ impl From<Move> for f32 {
         match value {
             Move::Advance => 1.0,
             Move::Retreat => 1.0,
-            Move::Jump => 1.5,
+            // Move::Jump => 1.5,
             Move::Lunge => 4.0,
             Move::EnGarde => 0.0,
         }

@@ -121,7 +121,7 @@ pub fn fighter_2_movement(
                 if world_state.row == Some(Player::Two) {
                     world_state.row = None;
                 }
-            } else if distance <= 1.75 && world_state.row == Some(Player::Two) {
+            } else if distance <= 1.0 && world_state.row == Some(Player::Two) {
                 // lunge if in range
                 fighter.set_action(Move::Lunge);
                 // world_state.row = None;
