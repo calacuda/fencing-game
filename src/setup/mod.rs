@@ -11,7 +11,7 @@ impl Plugin for SetupPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, setup_camera)
             .add_systems(OnEnter(Screen::Game), setup_camera)
-            .add_systems(Update, start_bout.run_if(in_state(Screen::NewBout)))
+            .add_systems(OnEnter(Screen::NewBout), cleanup_after_bout)
             .add_systems(Update, make_visible.run_if(in_state(Screen::Setup)));
     }
 }
@@ -32,14 +32,8 @@ fn setup_camera(
 
     let window = window_query.get_single().unwrap();
 
-    // window.scale_factor()
     let mut camera = Camera2dBundle::default();
-    // For this example, let's make the screen/window height correspond to
-    // 1600.0 world units. The width will depend on the aspect ratio.
-    // camera.projection.scaling_mode = ScalingMode::FixedHorizontal(800.0);
     camera.transform = Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0);
-    // camera.projection.scaling_mode = ScalingMode::FixedVertical(200.0);
-    // camera.projection.scaling_mode = ScalingMode::FixedVertical(300.0);
     camera.projection.scaling_mode = ScalingMode::FixedHorizontal(16.0 * 32.0);
 
     commands.spawn((camera, GameView));
@@ -50,22 +44,24 @@ fn make_visible(
     frames: Res<FrameCount>,
     mut next_state: ResMut<NextState<Screen>>,
 ) {
-    // The delay may be different for your app or system.
     if frames.0 == 5 {
-        // info!("making window visible");
+        debug!("making window visible");
         window.single_mut().visible = true;
         // TODO: change this once welcome and game mode selection screens get written.
         next_state.set(Screen::NewBout)
     }
 }
 
-fn start_bout(
+fn cleanup_after_bout(
     mut commands: Commands,
     mut next_state: ResMut<NextState<Screen>>,
+    // The "With<Fighter/GaurdIconMarker/ScoreBoard>" is nessesary because of the generic nature
+    // of the "Query<Entity>" part. Without the restiction the camera & EVERYTHING ELSE gets
+    // despawned along with the fighters, gaurd icons, and score board. which woudld breaks the
+    // game.
     fighters: Query<Entity, With<Fighter>>,
     gaurd_icons: Query<Entity, With<GaurdIconMarker>>,
     score_boards: Query<Entity, With<ScoreBoard>>,
-    // spawned_fighters: Query<Entity>,
 ) {
     fighters
         .iter()

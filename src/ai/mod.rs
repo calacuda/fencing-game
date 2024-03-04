@@ -39,8 +39,6 @@ fn spawn_fighter_two(
             handed: Handed::Right,
             player: Player::Two,
             // contoller: Controller::Computer,
-            // touches: 0,
-            // matches: 0,
             parrying: false,
             action: Action::from(Move::EnGarde),
             crouched: false,
@@ -52,7 +50,6 @@ fn spawn_fighter_two(
                 index: 0,
             },
             sprite: Sprite {
-                // custom_size: Some(Vec2::new(100., 100.)),
                 flip_x: true,
                 ..default()
             },
@@ -100,7 +97,7 @@ pub fn fighter_2_movement(
     player1_query: Query<&Fighter, With<PlayerMarker>>,
     mut p2_timer: ResMut<P2Timer>,
     time: Res<Time>,
-    mut world_state: ResMut<GameState>, // needed to change who has the Right of way
+    mut world_state: ResMut<GameState>,
 ) {
     if let (Ok((mut fighter, mut atlas)), Ok(player1)) =
         (fighter_2_query.get_single_mut(), player1_query.get_single())
@@ -124,18 +121,12 @@ pub fn fighter_2_movement(
             } else if distance <= 1.0 && world_state.row == Some(Player::Two) {
                 // lunge if in range
                 fighter.set_action(Move::Lunge);
-                // world_state.row = None;
                 atlas.index += 1;
                 world_state.lunger = Some(Player::Two);
             } else if player1.lunged() && world_state.row == Some(Player::One) && distance <= 1.75 {
                 // parry if enemy lunges and has right of way
-                // fighter.gaurd = match fighter.gaurd {
-                //     Gaurd::Up => Gaurd::Left,
-                //     Gaurd::Down => Gaurd::Right,
-                //     Gaurd::Left => Gaurd::Down,
-                //     Gaurd::Right => Gaurd::Up,
-                // };
                 // TODO: make fail (but only sometimes)
+                // TODO: update once parying gets more advanced.
                 fighter.gaurd = player1.gaurd;
 
                 world_state.row = Some(Player::Two);
@@ -145,9 +136,6 @@ pub fn fighter_2_movement(
             {
                 fighter.set_action(Move::Advance);
             }
-            // else {
-            //     fighter.set_action(Move::EnGarde);
-            // }
 
             if prev_gaurd != fighter.gaurd
                 && player1.lunged()
@@ -160,7 +148,6 @@ pub fn fighter_2_movement(
         }
 
         let pos_d = fighter.update_movement(time.clone());
-        // info!("{:?} -> {}", player.action.act, movement);
 
         fighter.position -= pos_d;
 
@@ -175,7 +162,7 @@ fn reset_fighter(mut player_query: Query<(&Fighter, &mut TextureAtlas), Without<
         && player.action.act != Move::Lunge
         && atlas.index > 0
     {
-        // info!("resetting player sprite to standing position");
+        debug!("resetting player sprite to standing position");
         atlas.index = 0;
     }
 }

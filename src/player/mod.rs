@@ -40,8 +40,6 @@ fn spawn_fighter_one(
             handed: Handed::Right,
             player: Player::One,
             // contoller: Controller::Player,
-            // touches: 0,
-            // matches: 0,
             parrying: false,
             action: Action::from(Move::EnGarde),
             crouched: false,
@@ -95,14 +93,14 @@ pub fn player_movement(
     if let Ok((mut player, mut atlas)) = player_query.get_single_mut() {
         if !player.action.blocked() {
             if keyboard_input.pressed(KeyCode::KeyA) {
-                // move left (retreat)
+                // retreat
                 player.set_action(Move::Retreat);
 
                 if world_state.row == Some(Player::One) {
                     world_state.row = None;
                 }
             } else if keyboard_input.pressed(KeyCode::KeyD) {
-                // move right (advance)
+                // advance
                 player.set_action(Move::Advance);
 
                 if world_state.row.is_none() {
@@ -120,11 +118,8 @@ pub fn player_movement(
         }
 
         let pos_d = player.update_movement(time.clone());
-        // info!("{:?} -> {}", player.action.act, movement);
 
         player.position += pos_d;
-    } else {
-        error!("no player found");
     }
 }
 
@@ -133,7 +128,7 @@ fn reset_player(mut player_query: Query<(&Fighter, &mut TextureAtlas), With<Play
         && player.action.act != Move::Lunge
         && atlas.index > 0
     {
-        // info!("resetting player sprite to standing position");
+        debug!("resetting player sprite to standing position");
         atlas.index = 0;
     }
 }
@@ -172,8 +167,9 @@ pub fn player_blade_play(
                 player.parrying = false;
             }
 
-            if Some(Player::Two) == world_state.lunger && prev_gaurd != player.gaurd
-            // && player.gaurd.parries(player2.gaurd)
+            if Some(Player::Two) == world_state.lunger
+                && prev_gaurd != player.gaurd
+                && player.gaurd.parries(player2.gaurd)
             {
                 info!("player 1 parried and stole right of way");
                 world_state.lunger = None;

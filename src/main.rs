@@ -20,7 +20,6 @@ fn main() {
         .add_plugins(player::PlayerPlugin)
         .add_plugins(ai::AiPlugin)
         .add_plugins(combat::CombatPlugin)
-        // .add_plugins(DefaultPlugins)
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {
@@ -48,17 +47,6 @@ fn main() {
         .run()
 }
 
-// fn print_fighters_state(query: Query<&Fighter>) {
-//     for player in query.iter() {
-//         info!(
-//             "player: {:?}, [touches, matches]: ({}, {})",
-//             player.player, player.touches, player.matches
-//         );
-//     }
-// }
-
 pub fn distance(pos1: f32, pos2: f32) -> f32 {
     (pos2 - pos1).powf(2.0).sqrt()
-    // info!("distance: {res}");
-    // res
 }

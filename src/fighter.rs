@@ -19,8 +19,6 @@ pub struct Fighter {
     // pub contoller: Controller,
     /// is this fighter mounting a parry.
     pub parrying: bool,
-    //     /// does this fighter have the right of way.
-    //     pub right_of_way: bool,
     /// the move that the player is doing. will block other movements untill done.
     pub action: Action,
     /// wether the player is crouched or not.
@@ -118,7 +116,6 @@ pub enum Player {
 pub enum Move {
     Advance,
     Retreat,
-    // Jump,
     Lunge,
     EnGarde,
     // TODO: add DoubleAdvance and DoubleRetreat
@@ -129,7 +126,6 @@ impl Into<((f32, f32), Vec3)> for Move {
         match self {
             Self::Advance => ((0.5, 0.35), Vec3::new(0.75, 0.0, 0.0)),
             Self::Retreat => ((0.5, 0.35), Vec3::new(-0.75, 0.0, 0.0)),
-            // Self::Jump => ((0.75, 0.5), Vec3::new(0.0, 1.25, 0.0)),
             Self::Lunge => ((0.75, 0.2), Vec3::new(0.75, 0.0, 0.0)),
             // f32::NEG_INFINITY makes this non-blocking
             Self::EnGarde => ((f32::NEG_INFINITY, 0.0), Vec3::ZERO),
@@ -142,7 +138,6 @@ impl From<Move> for f32 {
         match value {
             Move::Advance => 1.0,
             Move::Retreat => 1.0,
-            // Move::Jump => 1.5,
             Move::Lunge => 4.0,
             Move::EnGarde => 0.0,
         }

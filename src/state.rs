@@ -62,12 +62,15 @@ impl GameState {
         }
     }
 
-    pub fn score_touch(&mut self, player: Player) {
+    pub fn score_touch(&mut self, player: Player) -> Screen {
+        let mut next_state: Screen = Screen::TouchScored;
+
         match player {
             Player::One => {
                 if self.p1_score.touches == 14 {
                     info!("match over!");
                     self.p2_score.touches = 0;
+                    next_state = Screen::Victory;
                 }
 
                 self.p1_score.score_touch();
@@ -76,16 +79,19 @@ impl GameState {
                 if self.p2_score.touches == 14 {
                     info!("match over!");
                     self.p1_score.touches = 0;
+                    next_state = Screen::Victory;
                 }
 
                 self.p2_score.score_touch();
             }
         }
 
-        // info!(
-        //     "player 1: ({}/15) | player 2: ({}/15)",
-        //     self.p1_score.touches, self.p2_score.touches
-        // );
+        // TODO: return "next_state" once Victory and TouchScored screens are implemented.
+
+        // next_state
+
+        // TODO: remove below once Victory and TouchScored screens are implemented.
+        Screen::NewBout
     }
 }
 

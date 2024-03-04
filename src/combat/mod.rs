@@ -24,7 +24,6 @@ impl Plugin for CombatPlugin {
             .add_systems(Update, side_flip_detect.run_if(in_state(Screen::Game)))
             .add_systems(Update, bounds_limiter.run_if(in_state(Screen::Game)))
             .add_systems(OnExit(Screen::NewBout), score_board)
-            // .add_systems(Update, victory_check.run_if(in_state(Screen::Game)))
             .add_systems(Update, position_fighters.run_if(in_state(Screen::Game)));
     }
 }
@@ -42,30 +41,27 @@ fn touch_scored(
         let distance = distance(p1.position, p2.position);
 
         debug!("{}, {}, distance => {}", p1.position, p2.position, distance);
-        // if !p1.lunged() && !p2.lunged() {}
         if p1.lunged()
             && world_state.lunger == Some(Player::One)
             && world_state.row == Some(Player::One)
-            // && lunge_time.elapsed_seconds() >= 0.5
             && !p2.parrying
             && distance <= range
         {
             info!("Player 1 scored");
-            world_state.score_touch(Player::One);
+            let next_world_state = world_state.score_touch(Player::One);
             world_state.reset();
-            next_state.set(Screen::NewBout);
+            next_state.set(next_world_state);
         }
         if p2.lunged()
             && world_state.lunger == Some(Player::Two)
             && world_state.row == Some(Player::Two)
-            // && lunge_time.elapsed_seconds() >= 0.5
             && !p1.parrying
             && distance <= range
         {
             info!("Player 2 scored");
-            world_state.score_touch(Player::Two);
+            let next_world_state = world_state.score_touch(Player::Two);
             world_state.reset();
-            next_state.set(Screen::NewBout);
+            next_state.set(next_world_state);
         }
     }
 }
@@ -128,7 +124,6 @@ fn position_fighters(
         (&mut Transform, &mut TextureAtlas),
         (
             With<GaurdIconMarker>,
-            // Without<Fighter>,
             With<PlayerMarker>,
             // Without<Player2Marker>,
         ),
@@ -137,7 +132,6 @@ fn position_fighters(
         (&mut Transform, &mut TextureAtlas),
         (
             With<GaurdIconMarker>,
-            // Without<Fighter>,
             Without<PlayerMarker>,
             // With<Player2Marker>,
         ),
@@ -187,9 +181,9 @@ fn position_fighters(
 
         p2_atlas.index = p2.gaurd.into();
     } else {
-        // error!(
-        //     "could not get one of: player1/2, player1/2 sprite, player1/2 gaurd icon sprite/atlas"
-        // )
+        debug!(
+            "could not get one of: player1/2, player1/2 sprite, player1/2 gaurd icon sprite/atlas"
+        )
     }
 }
 
