@@ -58,7 +58,7 @@ fn spawn_buttons(
     window_query: Query<&Window, With<PrimaryWindow>>,
     world_state: Res<GameState>,
 ) {
-    info!("spawning pause menu buttons");
+    debug!("spawning pause menu buttons");
 
     commands
         .spawn((

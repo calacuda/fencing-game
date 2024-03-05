@@ -51,7 +51,7 @@ impl Plugin for ScoreScreenPlugin {
 
 /// spawns the buttons (and button text) of the score menu
 fn spawn_buttons(mut commands: Commands, world_state: Res<GameState>) {
-    info!("spawning score touch menu buttons");
+    debug!("spawning score touch menu buttons");
 
     commands
         .spawn((
