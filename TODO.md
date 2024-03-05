@@ -24,11 +24,11 @@
 - [ ] add a q-learning agent to control the computer player
 - [ ] add multiplayer LAN games
 - [ ] add pausing for `vs. comp` games
-    - [ ] make a pause menu
+    - [x] make a pause menu
         - [ ] has score
-        - [ ] has conitue button
-        - [ ] has rage quite button
-        - [ ] has view/edit controls button
+        - [x] has conitue button
+        - [x] has rage quite button
+        - [x] has view/edit controls button
     - [ ] show pause menu when paused
     - [ ] pause player actions, computer actions, & computer timer when paused
 - [ ] add screens (each screen as a Bevy pluggin)
@@ -38,9 +38,9 @@
     - [ ] "how to play" screen (shows how to play the game)
     - [x] touch scored screen (announce the scoring of a touch)
         - the user should be presented with:
-            - [ ] the new score
-            - [ ] a button to go to next bout
-            - [ ] a button to rage quit
+            - [x] the new score
+            - [x] a button to go to next bout
+            - [x] a button to rage quit
     - [ ] match victory screen (announce that a player won the match)
     - [ ] new bout match start count down screen
 
