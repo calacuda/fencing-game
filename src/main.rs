@@ -11,8 +11,12 @@ mod player;
 mod score_screen;
 mod setup;
 mod state;
+mod welcome;
 
 pub const PLAYER_SPEED: f32 = 0.75;
+
+#[derive(Component)]
+pub struct ButtonMarker;
 
 fn main() {
     App::new()
@@ -24,6 +28,7 @@ fn main() {
         .add_plugins(combat::CombatPlugin)
         .add_plugins(score_screen::ScoreScreenPlugin)
         .add_plugins(pause::PauseScreenPlugin)
+        .add_plugins(welcome::WelcomeScreenPlugin)
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {
@@ -58,4 +63,11 @@ pub fn distance(pos1: f32, pos2: f32) -> f32 {
 
 fn exit_game(mut exit: EventWriter<AppExit>) {
     exit.send(AppExit);
+}
+
+/// despwans menu icons
+pub fn despawn_buttons(mut commands: Commands, buttons_query: Query<Entity, With<ButtonMarker>>) {
+    buttons_query
+        .iter()
+        .for_each(|button| commands.entity(button).despawn_recursive());
 }

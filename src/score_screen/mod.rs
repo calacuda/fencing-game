@@ -1,7 +1,10 @@
-use std::ops::Not;
-
-use crate::state::{GameState, Screen};
+use crate::{
+    despawn_buttons,
+    state::{GameState, Screen},
+    ButtonMarker,
+};
 use bevy::prelude::*;
+use std::ops::Not;
 
 #[derive(Component, Debug, Copy, Clone, PartialEq, Eq)]
 enum ScoreMenuButton {
@@ -19,9 +22,6 @@ impl Not for ScoreMenuButton {
         }
     }
 }
-
-#[derive(Component)]
-struct ButtonMarker;
 
 #[derive(Resource)]
 struct SelectedButton(Option<ScoreMenuButton>, Interaction);
@@ -49,7 +49,7 @@ impl Plugin for ScoreScreenPlugin {
     }
 }
 
-/// spawns the buttons (and button text) of the pause menu
+/// spawns the buttons (and button text) of the score menu
 fn spawn_buttons(mut commands: Commands, world_state: Res<GameState>) {
     info!("spawning score touch menu buttons");
 
@@ -175,13 +175,6 @@ fn spawn_buttons(mut commands: Commands, world_state: Res<GameState>) {
         });
 
     commands.insert_resource(SelectedButton(None, Interaction::None));
-}
-
-/// despwans menu icons
-fn despawn_buttons(mut commands: Commands, buttons_query: Query<Entity, With<ButtonMarker>>) {
-    buttons_query
-        .iter()
-        .for_each(|button| commands.entity(button).despawn_recursive());
 }
 
 /// handles using the keyboard to select a button

@@ -1,33 +1,34 @@
-use crate::state::{GameState, Screen};
+use crate::{
+    despawn_buttons,
+    state::{GameState, Screen},
+    ButtonMarker,
+};
 use bevy::{prelude::*, window::PrimaryWindow};
 
 #[derive(Component, Clone, Copy, PartialEq, Eq)]
 enum PauseMenuButton {
     Continue,
     RageQuit,
-    Contols,
+    Controls,
 }
 
 impl PauseMenuButton {
     fn next(index: PauseMenuButton) -> Self {
         match index {
             Self::Continue => Self::RageQuit,
-            Self::RageQuit => Self::Contols,
-            Self::Contols => Self::Continue,
+            Self::RageQuit => Self::Controls,
+            Self::Controls => Self::Continue,
         }
     }
 
     fn prev(index: PauseMenuButton) -> Self {
         match index {
-            Self::Continue => Self::Contols,
+            Self::Continue => Self::Controls,
             Self::RageQuit => Self::Continue,
-            Self::Contols => Self::RageQuit,
+            Self::Controls => Self::RageQuit,
         }
     }
 }
-
-#[derive(Component)]
-struct ButtonMarker;
 
 #[derive(Resource)]
 struct SelectedButton(Option<PauseMenuButton>, Interaction);
@@ -55,10 +56,8 @@ impl Plugin for PauseScreenPlugin {
 fn spawn_buttons(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
-    mut world_state: ResMut<GameState>,
+    world_state: Res<GameState>,
 ) {
-    let window = window_query.get_single().unwrap();
-
     info!("spawning pause menu buttons");
 
     commands
@@ -236,7 +235,7 @@ fn spawn_buttons(
                                         ..default()
                                     },
                                 ),
-                                PauseMenuButton::Contols,
+                                PauseMenuButton::Controls,
                             ));
                         });
                 });
@@ -292,13 +291,6 @@ fn spawn_buttons(
         });
 
     commands.insert_resource(SelectedButton(None, Interaction::None));
-}
-
-/// despwans pause menu icons
-fn despawn_buttons(mut commands: Commands, buttons_query: Query<Entity, With<ButtonMarker>>) {
-    buttons_query
-        .iter()
-        .for_each(|button| commands.entity(button).despawn_recursive());
 }
 
 /// handles using the keyboard to select a button
@@ -414,7 +406,7 @@ fn button_selection(
 fn press_button(button: PauseMenuButton) -> Screen {
     match button {
         PauseMenuButton::Continue => Screen::Game,
-        PauseMenuButton::Contols => {
+        PauseMenuButton::Controls => {
             error!("controls menu has yet to programmed");
             Screen::PauseMenu
         }

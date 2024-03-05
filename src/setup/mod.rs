@@ -47,8 +47,7 @@ fn make_visible(
     if frames.0 == 5 {
         debug!("making window visible");
         window.single_mut().visible = true;
-        // TODO: change this once welcome and game mode selection screens get written.
-        next_state.set(Screen::NewBout)
+        next_state.set(Screen::Welcome)
     }
 }
 

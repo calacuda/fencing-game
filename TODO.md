@@ -35,7 +35,7 @@
         - [x] computer actions
         - [ ] computer timer
 - [ ] add screens (each screen as a Bevy pluggin)
-    - [ ] welcome screen (`Play`, `Controls`, or `How To Play`)
+    - [x] welcome screen (`Play`, `Controls`, or `How To Play`)
     - [ ] mode select screen (`vs. computer`, `vs. human (LAN)`, or `spectate`)
     - [ ] controls screen (to show/edit controls)
     - [ ] "how to play" screen (shows how to play the game)
@@ -46,6 +46,10 @@
             - [x] a button to rage quit
     - [ ] match victory screen (announce that a player won the match)
     - [ ] new bout match start count down screen
+- [x] consolidate `ButtonMarker` structs into one
+- [ ] consolidate `mouse_select` functions
+- [ ] consolidate `button_selection` functions
+- [ ] consolidate `keyboard_select` functions
 
 ## Notes
 
