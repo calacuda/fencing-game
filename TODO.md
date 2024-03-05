@@ -25,7 +25,7 @@
 - [ ] add multiplayer LAN games
 - [ ] add pausing for `vs. comp` games
     - [x] make a pause menu
-        - [ ] has score
+        - [x] has score
         - [x] has conitue button
         - [x] has rage quite button
         - [x] has view/edit controls button

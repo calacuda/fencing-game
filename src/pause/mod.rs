@@ -1,4 +1,4 @@
-use crate::state::Screen;
+use crate::state::{GameState, Screen};
 use bevy::{prelude::*, window::PrimaryWindow};
 
 #[derive(Component, Clone, Copy, PartialEq, Eq)]
@@ -52,7 +52,11 @@ impl Plugin for PauseScreenPlugin {
 }
 
 /// spawns the buttons (and button text) of the pause menu
-fn spawn_buttons(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
+fn spawn_buttons(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    mut world_state: ResMut<GameState>,
+) {
     let window = window_query.get_single().unwrap();
 
     info!("spawning pause menu buttons");
@@ -65,7 +69,7 @@ fn spawn_buttons(mut commands: Commands, window_query: Query<&Window, With<Prima
                     height: Val::Percent(50.0),
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::SpaceEvenly,
-                    flex_direction: FlexDirection::Column,
+                    flex_direction: FlexDirection::Row,
                     align_self: AlignSelf::Center,
                     ..default()
                 },
@@ -73,117 +77,216 @@ fn spawn_buttons(mut commands: Commands, window_query: Query<&Window, With<Prima
             },
             ButtonMarker,
         ))
-        // spawn Continue Button
+        // Player One Score
         .with_children(|parent| {
             parent
-                .spawn(ButtonBundle {
+                .spawn(NodeBundle {
                     style: Style {
-                        width: Val::Vw(10.0),
-                        height: Val::Vh(5.0),
-                        border: UiRect::all(Val::Px(1.0)),
-                        // horizontally center child text
-                        justify_content: JustifyContent::Center,
-                        // vertically center child text
-                        align_items: AlignItems::Center,
+                        width: Val::Percent(25.0),
+                        height: Val::Percent(50.0),
+                        align_items: AlignItems::End,
+                        justify_content: JustifyContent::SpaceEvenly,
+                        flex_direction: FlexDirection::Column,
+                        align_self: AlignSelf::Center,
                         ..default()
                     },
-                    border_color: BorderColor(Color::BLACK),
-                    background_color: NORMAL_BUTTON.into(),
-                    transform: Transform::from_xyz(
-                        window.width() / 2.0,
-                        (window.height() / 5.0) * 4.0,
-                        0.0,
-                    ),
                     ..default()
                 })
                 .with_children(|parent| {
-                    parent.spawn((
-                        TextBundle::from_section(
-                            "Continue",
-                            TextStyle {
-                                // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                                font_size: 16.0,
-                                color: Color::rgb(0.9, 0.9, 0.9),
-                                ..default()
-                            },
-                        ),
-                        PauseMenuButton::Continue,
+                    parent.spawn(TextBundle::from_section(
+                        "Player One",
+                        TextStyle {
+                            // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                            font_size: 32.0,
+                            color: Color::rgb(0.9, 0.9, 0.9),
+                            ..default()
+                        },
+                    ));
+                })
+                .with_children(|parent| {
+                    parent.spawn(TextBundle::from_section(
+                        format!("Touches => {:>3}", world_state.p1_score.touches),
+                        TextStyle {
+                            // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                            font_size: 32.0,
+                            color: Color::rgb(0.9, 0.9, 0.9),
+                            ..default()
+                        },
+                    ));
+                })
+                .with_children(|parent| {
+                    parent.spawn(TextBundle::from_section(
+                        format!("Matches => {:>3}", world_state.p1_score.matches),
+                        TextStyle {
+                            // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                            font_size: 32.0,
+                            color: Color::rgb(0.9, 0.9, 0.9),
+                            ..default()
+                        },
                     ));
                 });
         })
-        // Rage Quit button
+        // buttons
         .with_children(|parent| {
             parent
-                .spawn(ButtonBundle {
+                .spawn(NodeBundle {
                     style: Style {
-                        width: Val::Vw(10.0),
-                        height: Val::Vh(5.0),
-                        border: UiRect::all(Val::Px(1.0)),
-                        // horizontally center child text
-                        justify_content: JustifyContent::Center,
-                        // vertically center child text
+                        width: Val::Percent(12.5),
+                        height: Val::Percent(50.0),
                         align_items: AlignItems::Center,
+                        justify_content: JustifyContent::SpaceEvenly,
+                        flex_direction: FlexDirection::Column,
+                        align_self: AlignSelf::Center,
                         ..default()
                     },
-                    border_color: BorderColor(Color::BLACK),
-                    background_color: NORMAL_BUTTON.into(),
-                    // transform: Transform::from_xyz(
-                    //     window.width() / 2.0,
-                    //     (window.height() / 5.0) * 3.0,
-                    //     0.0,
-                    // ),
                     ..default()
                 })
+                // spawn Continue Button
                 .with_children(|parent| {
-                    parent.spawn((
-                        TextBundle::from_section(
-                            "Rage Quit",
-                            TextStyle {
-                                // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                                font_size: 16.0,
-                                color: Color::rgb(0.9, 0.9, 0.9),
+                    parent
+                        .spawn(ButtonBundle {
+                            style: Style {
+                                width: Val::Vw(10.0),
+                                height: Val::Vh(5.0),
+                                border: UiRect::all(Val::Px(1.0)),
+                                // horizontally center child text
+                                justify_content: JustifyContent::Center,
+                                // vertically center child text
+                                align_items: AlignItems::Center,
                                 ..default()
                             },
-                        ),
-                        PauseMenuButton::RageQuit,
-                    ));
+                            border_color: BorderColor(Color::BLACK),
+                            background_color: NORMAL_BUTTON.into(),
+                            ..default()
+                        })
+                        .with_children(|parent| {
+                            parent.spawn((
+                                TextBundle::from_section(
+                                    "Continue",
+                                    TextStyle {
+                                        // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                        font_size: 16.0,
+                                        color: Color::rgb(0.9, 0.9, 0.9),
+                                        ..default()
+                                    },
+                                ),
+                                PauseMenuButton::Continue,
+                            ));
+                        });
+                })
+                // Rage Quit button
+                .with_children(|parent| {
+                    parent
+                        .spawn(ButtonBundle {
+                            style: Style {
+                                width: Val::Vw(10.0),
+                                height: Val::Vh(5.0),
+                                border: UiRect::all(Val::Px(1.0)),
+                                // horizontally center child text
+                                justify_content: JustifyContent::Center,
+                                // vertically center child text
+                                align_items: AlignItems::Center,
+                                ..default()
+                            },
+                            border_color: BorderColor(Color::BLACK),
+                            background_color: NORMAL_BUTTON.into(),
+                            ..default()
+                        })
+                        .with_children(|parent| {
+                            parent.spawn((
+                                TextBundle::from_section(
+                                    "Rage Quit",
+                                    TextStyle {
+                                        // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                        font_size: 16.0,
+                                        color: Color::rgb(0.9, 0.9, 0.9),
+                                        ..default()
+                                    },
+                                ),
+                                PauseMenuButton::RageQuit,
+                            ));
+                        });
+                })
+                // Rage Controls button
+                .with_children(|parent| {
+                    parent
+                        .spawn(ButtonBundle {
+                            style: Style {
+                                width: Val::Vw(10.0),
+                                height: Val::Vh(5.0),
+                                border: UiRect::all(Val::Px(1.0)),
+                                // horizontally center child text
+                                justify_content: JustifyContent::Center,
+                                // vertically center child text
+                                align_items: AlignItems::Center,
+                                ..default()
+                            },
+                            border_color: BorderColor(Color::BLACK),
+                            background_color: NORMAL_BUTTON.into(),
+                            ..default()
+                        })
+                        .with_children(|parent| {
+                            parent.spawn((
+                                TextBundle::from_section(
+                                    "Controls",
+                                    TextStyle {
+                                        // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                        font_size: 16.0,
+                                        color: Color::rgb(0.9, 0.9, 0.9),
+                                        ..default()
+                                    },
+                                ),
+                                PauseMenuButton::Contols,
+                            ));
+                        });
                 });
         })
-        // Rage Controls button
+        // Player Two Score
         .with_children(|parent| {
             parent
-                .spawn(ButtonBundle {
+                .spawn(NodeBundle {
                     style: Style {
-                        width: Val::Vw(10.0),
-                        height: Val::Vh(5.0),
-                        border: UiRect::all(Val::Px(1.0)),
-                        // horizontally center child text
-                        justify_content: JustifyContent::Center,
-                        // vertically center child text
-                        align_items: AlignItems::Center,
+                        width: Val::Percent(25.0),
+                        height: Val::Percent(50.0),
+                        align_items: AlignItems::Start,
+                        justify_content: JustifyContent::SpaceEvenly,
+                        flex_direction: FlexDirection::Column,
+                        align_self: AlignSelf::Center,
                         ..default()
                     },
-                    border_color: BorderColor(Color::BLACK),
-                    background_color: NORMAL_BUTTON.into(),
-                    // transform: Transform::from_xyz(
-                    //     window.width() / 2.0,
-                    //     (window.height() / 5.0) * 2.0,
-                    //     0.0,
-                    // ),
                     ..default()
                 })
                 .with_children(|parent| {
-                    parent.spawn((
-                        TextBundle::from_section(
-                            "Controls",
-                            TextStyle {
-                                // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                                font_size: 16.0,
-                                color: Color::rgb(0.9, 0.9, 0.9),
-                                ..default()
-                            },
-                        ),
-                        PauseMenuButton::Contols,
+                    parent.spawn(TextBundle::from_section(
+                        "Player Two",
+                        TextStyle {
+                            // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                            font_size: 32.0,
+                            color: Color::rgb(0.9, 0.9, 0.9),
+                            ..default()
+                        },
+                    ));
+                })
+                .with_children(|parent| {
+                    parent.spawn(TextBundle::from_section(
+                        format!("{:<3} <= Touches", world_state.p1_score.touches),
+                        TextStyle {
+                            // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                            font_size: 32.0,
+                            color: Color::rgb(0.9, 0.9, 0.9),
+                            ..default()
+                        },
+                    ));
+                })
+                .with_children(|parent| {
+                    parent.spawn(TextBundle::from_section(
+                        format!("{:<3} <= Matches", world_state.p1_score.matches),
+                        TextStyle {
+                            // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                            font_size: 32.0,
+                            color: Color::rgb(0.9, 0.9, 0.9),
+                            ..default()
+                        },
                     ));
                 });
         });
