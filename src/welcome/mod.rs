@@ -58,7 +58,7 @@ impl Plugin for WelcomeScreenPlugin {
 
 /// spawns the buttons (and button text) of the score menu
 fn spawn_buttons(mut commands: Commands) {
-    info!("spawning score touch menu buttons");
+    info!("spawning Welcome menu buttons");
 
     commands
         .spawn((

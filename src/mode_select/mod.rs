@@ -73,7 +73,7 @@ impl Plugin for ModeScreenPlugin {
 
 /// spawns the buttons (and button text) of the score menu
 fn spawn_buttons(mut commands: Commands) {
-    info!("spawning score touch menu buttons");
+    info!("spawning Mode Select menu buttons");
 
     commands
         .spawn((
