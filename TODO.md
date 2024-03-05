@@ -29,8 +29,11 @@
         - [x] has conitue button
         - [x] has rage quite button
         - [x] has view/edit controls button
-    - [ ] show pause menu when paused
+    - [x] show pause menu when paused
     - [ ] pause player actions, computer actions, & computer timer when paused
+        - [x] player actions
+        - [x] computer actions
+        - [ ] computer timer
 - [ ] add screens (each screen as a Bevy pluggin)
     - [ ] welcome screen (`Play`, `Controls`, or `How To Play`)
     - [ ] mode select screen (`vs. computer`, `vs. human (LAN)`, or `spectate`)
