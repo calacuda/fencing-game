@@ -36,12 +36,13 @@
     - [ ] mode select screen (`vs. computer`, `vs. human (LAN)`, or `spectate`)
     - [ ] controls screen (to show/edit controls)
     - [ ] "how to play" screen (shows how to play the game)
-    - [ ] touch scored screen (announce the scoring of a touch)
+    - [x] touch scored screen (announce the scoring of a touch)
         - the user should be presented with:
-            - the new score
-            - a button to go to next bout
-            - a button to rage quit
+            - [ ] the new score
+            - [ ] a button to go to next bout
+            - [ ] a button to rage quit
     - [ ] match victory screen (announce that a player won the match)
+    - [ ] new bout match start count down screen
 
 ## Notes
 

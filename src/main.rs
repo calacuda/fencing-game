@@ -1,5 +1,5 @@
 #![feature(let_chains)]
-use bevy::{prelude::*, window::PresentMode};
+use bevy::{app::AppExit, prelude::*, window::PresentMode};
 use fighter::*;
 use state::{GameState, Screen};
 
@@ -7,6 +7,7 @@ mod ai;
 mod combat;
 pub mod fighter;
 mod player;
+mod score_screen;
 mod setup;
 mod state;
 
@@ -20,6 +21,7 @@ fn main() {
         .add_plugins(player::PlayerPlugin)
         .add_plugins(ai::AiPlugin)
         .add_plugins(combat::CombatPlugin)
+        .add_plugins(score_screen::ScoreScreenPlugin)
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {
@@ -44,9 +46,14 @@ fn main() {
                 })
                 .set(ImagePlugin::default_nearest()),
         )
+        .add_systems(OnEnter(Screen::ExitGame), exit_game)
         .run()
 }
 
 pub fn distance(pos1: f32, pos2: f32) -> f32 {
     (pos2 - pos1).powf(2.0).sqrt()
+}
+
+fn exit_game(mut exit: EventWriter<AppExit>) {
+    exit.send(AppExit);
 }

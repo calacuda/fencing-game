@@ -23,9 +23,15 @@ impl Plugin for CombatPlugin {
         app.add_systems(Update, touch_scored.run_if(in_state(Screen::Game)))
             .add_systems(Update, side_flip_detect.run_if(in_state(Screen::Game)))
             .add_systems(Update, bounds_limiter.run_if(in_state(Screen::Game)))
+            .add_systems(OnExit(Screen::Game), rm_score_board)
             .add_systems(OnExit(Screen::NewBout), score_board)
+            .add_systems(OnExit(Screen::NewBout), reset_world)
             .add_systems(Update, position_fighters.run_if(in_state(Screen::Game)));
     }
+}
+
+fn reset_world(mut world_state: ResMut<GameState>) {
+    world_state.reset();
 }
 
 fn touch_scored(
@@ -49,7 +55,7 @@ fn touch_scored(
         {
             info!("Player 1 scored");
             let next_world_state = world_state.score_touch(Player::One);
-            world_state.reset();
+            // world_state.reset();
             next_state.set(next_world_state);
         }
         if p2.lunged()
@@ -60,7 +66,7 @@ fn touch_scored(
         {
             info!("Player 2 scored");
             let next_world_state = world_state.score_touch(Player::Two);
-            world_state.reset();
+            // world_state.reset();
             next_state.set(next_world_state);
         }
     }
@@ -240,4 +246,10 @@ fn score_board(mut commands: Commands, world_state: Res<GameState>) {
         }),
         ScoreBoard,
     ));
+}
+
+fn rm_score_board(mut commands: Commands, score_boards: Query<Entity, With<ScoreBoard>>) {
+    score_boards
+        .iter()
+        .for_each(|board| commands.entity(board).despawn());
 }

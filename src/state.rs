@@ -8,7 +8,7 @@ pub enum Screen {
     #[default]
     Setup,
     /// the welcome screen (choose between playing the game (ModeSelect), view/edit controls
-    /// (Controls), or Rules (HowToPlay))
+    /// (Controls), Rules (HowToPlay), or exit game (ExitGame))
     Welcome,
     /// choose to duel the computer, duel a human (over a LAN connection), or spectate a human vs.
     /// human match
@@ -19,8 +19,6 @@ pub enum Screen {
     PauseMenu,
     /// used to clean up from last bout and setup for next bout.
     NewBout,
-    /// used to announce that a player scored the touch
-    ScoreBoard,
     /// used to announce that a player won the match
     Victory,
     /// used to show/edit the controls,
@@ -31,6 +29,8 @@ pub enum Screen {
     TouchScored,
     /// announces which player scored the touch
     MatchWon,
+    /// used to exit the game
+    ExitGame,
 }
 
 #[derive(Resource, Debug)]
@@ -88,10 +88,10 @@ impl GameState {
 
         // TODO: return "next_state" once Victory and TouchScored screens are implemented.
 
-        // next_state
+        next_state
 
-        // TODO: remove below once Victory and TouchScored screens are implemented.
-        Screen::NewBout
+        // // TODO: remove below once Victory and TouchScored screens are implemented.
+        // Screen::NewBout
     }
 }
 

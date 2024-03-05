@@ -104,7 +104,7 @@ pub enum Handed {
     Left,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Player {
     /// player one.
     One,
