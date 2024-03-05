@@ -6,6 +6,7 @@ use state::{GameState, Screen};
 mod ai;
 mod combat;
 pub mod fighter;
+mod mode_select;
 mod pause;
 mod player;
 mod score_screen;
@@ -29,6 +30,7 @@ fn main() {
         .add_plugins(score_screen::ScoreScreenPlugin)
         .add_plugins(pause::PauseScreenPlugin)
         .add_plugins(welcome::WelcomeScreenPlugin)
+        .add_plugins(mode_select::ModeScreenPlugin)
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {

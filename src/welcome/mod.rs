@@ -1,5 +1,6 @@
 use crate::{
     despawn_buttons,
+    setup::cleanup_after_bout,
     state::{GameState, Screen},
     ButtonMarker,
 };
@@ -46,6 +47,8 @@ pub struct WelcomeScreenPlugin;
 impl Plugin for WelcomeScreenPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(Screen::Welcome), spawn_buttons)
+            .add_systems(OnEnter(Screen::Welcome), cleanup_after_bout)
+            .add_systems(OnEnter(Screen::Welcome), cleanup_world_state)
             .add_systems(OnExit(Screen::Welcome), despawn_buttons)
             .add_systems(Update, keyboard_select.run_if(in_state(Screen::Welcome)))
             .add_systems(Update, mouse_select.run_if(in_state(Screen::Welcome)))
@@ -83,7 +86,7 @@ fn spawn_buttons(mut commands: Commands) {
                 },
             ));
         })
-        // spawn Continue Button
+        // spawn play Button
         .with_children(|parent| {
             parent
                 .spawn(ButtonBundle {
@@ -116,7 +119,7 @@ fn spawn_buttons(mut commands: Commands) {
                     ));
                 });
         })
-        // Controls menu button
+        // Controls button
         .with_children(|parent| {
             parent
                 .spawn(ButtonBundle {
@@ -182,7 +185,7 @@ fn spawn_buttons(mut commands: Commands) {
                     ));
                 });
         })
-        // How to play menu
+        // exit button
         .with_children(|parent| {
             parent
                 .spawn(ButtonBundle {
@@ -331,7 +334,7 @@ fn button_selection(
 /// called by mouse select or keyboard select. used to envoke the buttons function
 fn press_button(button: WelcomeMenuButton) -> Screen {
     match button {
-        WelcomeMenuButton::Play => Screen::NewBout,
+        WelcomeMenuButton::Play => Screen::ModeSelect,
         WelcomeMenuButton::Controls => {
             error!("controls menu has yet to programmed");
             Screen::Welcome
@@ -342,4 +345,9 @@ fn press_button(button: WelcomeMenuButton) -> Screen {
         }
         WelcomeMenuButton::Exit => Screen::ExitGame,
     }
+}
+
+fn cleanup_world_state(mut world_state: ResMut<GameState>) {
+    world_state.reset();
+    world_state.reset_scores();
 }

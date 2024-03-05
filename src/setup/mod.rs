@@ -12,6 +12,7 @@ impl Plugin for SetupPlugin {
         app.add_systems(Startup, setup_camera)
             .add_systems(OnEnter(Screen::Game), setup_camera)
             .add_systems(OnEnter(Screen::NewBout), cleanup_after_bout)
+            .add_systems(OnEnter(Screen::NewBout), start_game)
             .add_systems(Update, make_visible.run_if(in_state(Screen::Setup)));
     }
 }
@@ -51,9 +52,8 @@ fn make_visible(
     }
 }
 
-fn cleanup_after_bout(
+pub fn cleanup_after_bout(
     mut commands: Commands,
-    mut next_state: ResMut<NextState<Screen>>,
     // The "With<Fighter/GaurdIconMarker/ScoreBoard>" is nessesary because of the generic nature
     // of the "Query<Entity>" part. Without the restiction the camera & EVERYTHING ELSE gets
     // despawned along with the fighters, gaurd icons, and score board. which woudld breaks the
@@ -71,6 +71,8 @@ fn cleanup_after_bout(
     score_boards
         .iter()
         .for_each(|board| commands.entity(board).despawn());
+}
 
+fn start_game(mut next_state: ResMut<NextState<Screen>>) {
     next_state.set(Screen::Game)
 }

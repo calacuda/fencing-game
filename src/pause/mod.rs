@@ -410,7 +410,7 @@ fn press_button(button: PauseMenuButton) -> Screen {
             error!("controls menu has yet to programmed");
             Screen::PauseMenu
         }
-        PauseMenuButton::RageQuit => Screen::ExitGame,
+        PauseMenuButton::RageQuit => Screen::Welcome,
     }
 }
 

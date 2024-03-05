@@ -36,7 +36,7 @@
         - [ ] computer timer
 - [ ] add screens (each screen as a Bevy pluggin)
     - [x] welcome screen (`Play`, `Controls`, or `How To Play`)
-    - [ ] mode select screen (`vs. computer`, `vs. human (LAN)`, or `spectate`)
+    - [x] mode select screen (`vs. computer`, `vs. human (LAN)`, or `spectate`)
     - [ ] controls screen (to show/edit controls)
     - [ ] "how to play" screen (shows how to play the game)
     - [x] touch scored screen (announce the scoring of a touch)

@@ -62,6 +62,11 @@ impl GameState {
         }
     }
 
+    pub fn reset_scores(&mut self) {
+        self.p1_score = Score::default();
+        self.p2_score = Score::default();
+    }
+
     pub fn score_touch(&mut self, player: Player) -> Screen {
         let mut next_state: Screen = Screen::TouchScored;
 
